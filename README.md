@@ -1,19 +1,23 @@
-# Red Team Labs
+# Red Team Labs — Write-ups
 
-Практические проекты и разборы по атакующим техникам: разведка, эксплуатация, повышение привилегий, постэксплуатация.
+Практические write-up'ы по лабораторным работам (HTB Academy, модуль Footprinting) — разведка инфраструктуры, эксплуатация неправильных конфигураций сервисов, повышение привилегий через credential reuse и утечки секретов.
 
-## Структура
+⚠️ Все флаги и пароли в этих write-up'ах — **заменены на нереальные значения** и не соответствуют реальным ответам лабораторных заданий.
 
-- `recon/` — разведка и сбор информации (сканирование сети, enumeration сервисов)
-- `exploitation/` — эксплуатация уязвигостей, работа с payload'ами
-- `privilege-escalation/` — техники повышения привилегий на Windows/Linux
-- `post-exploitation/` — закрепление в системе, сбор данных, lateral movement
-- `active-directory/` — атаки на Active Directory и Windows-инфраструктуру
+## Содержание
 
-## Стек и инструменты
+| Лаба | Уровень | Основной вектор |
+|------|---------|------------------|
+| [footprinting-easy.md](footprinting-easy.md) | Easy | DNS zone transfer (AXFR) → subdomain enum → FTP → SSH key theft |
+| [footprinting-medium.md](footprinting-medium.md) | Medium | NFS anonymous mount → SMB → credential reuse → MSSQL |
+| [footprinting-hard.md](footprinting-hard.md) | Hard | SNMP community bruteforce → process argument leak → IMAP email → MySQL |
 
-Nmap, Metasploit, Burp Suite, BloodHound, Impacket, Python/Bash для автоматизации.
+## Формат write-up'а
 
-## Статус
+Каждый файл разбит на секции:
 
-Файлы и материалы будут добавляться по мере выполнения новых лабораторных работ.
+1. **Recon** — что смотрели и почему.
+2. **Vulnerability / Misconfig** — в чём суть проблемы (root cause, не только "как эксплуатировали").
+3. **Exploitation** — шаги атаки.
+4. **Remediation** — как закрыть проблему в реальной инфраструктуре.
+5. **Lessons learned** — обобщение, применимое за пределами конкретной лабы.
