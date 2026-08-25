@@ -2,9 +2,6 @@
 
 > ⚠️ Все флаги, пароли и хеши в этом write-up заменены на нереальные значения перед публикацией (репозиторий публичный).
 
-## Задача
-
-Цель — получить полный компромисс Linux-хоста Cap (Starting Point, Tier 0) через веб-приложение "Security Dashboard" на Gunicorn, включая этап privilege escalation до root (в отличие от предыдущих машин Responder и Three, где privesc не потребовался).
 
 ## Recon
 
