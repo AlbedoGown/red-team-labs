@@ -14,6 +14,7 @@
 | [metasploit-fortilogger.md](https://github.com/AlbedoGown/red-team-labs/blob/main/metasploit-fortilogger.md) | Metasploit | Arbitrary file upload RCE (FortiLogger) → SYSTEM shell → NTLM hashdump |
 | [starting-point-responder.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-responder.md) | Starting Point — Easy | LFI → UNC path (//attacker_ip) → NTLM capture (Responder) → hash crack → WinRM (Administrator) |
 | [starting-point-three.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-three.md) | Starting Point — Easy | Vhost enum → S3/localstack anonymous write access → PHP web shell → reverse shell |
+| [starting-point-cap.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-cap.md) | Starting Point — Easy | Dashboard IDOR (pcap leak) → FTP plaintext creds → Python cap_setuid privesc |
 
 ## Формат write-up'а
 
