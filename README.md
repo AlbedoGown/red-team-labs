@@ -2,23 +2,24 @@
 
 Практические write-up'ы по лабораторным работам (HTB Academy) — разведка инфраструктуры, эксплуатация неправильных конфигураций сервисов, повышение привилегий через credential reuse и утечки секретов, а также эксплуатация уязвимостей веб-приложений через Metasploit Framework.
 
-⚠️ Все флаги, пароли и хеши в этих write-up'ах — **заменены на нереальные значения** и не соответствуют реальным ответам лабораторных заданий.
+⚠️ Все флаги, пароли и хеши в этих write-up'ах — заменены на нереальные значения и не соответствуют реальным ответам лабораторных заданий.
 
 ## Содержание
 
 | Лаба | Уровень | Основной вектор |
-|------|---------|------------------|
-| [footprinting-easy.md](footprinting-easy.md) | Easy | DNS zone transfer (AXFR) → subdomain enum → FTP → SSH key theft |
-| [footprinting-medium.md](footprinting-medium.md) | Medium | NFS anonymous mount → SMB → credential reuse → MSSQL |
-| [footprinting-hard.md](footprinting-hard.md) | Hard | SNMP community bruteforce → process argument leak → IMAP email → MySQL |
-| [metasploit-fortilogger.md](metasploit-fortilogger.md) | Metasploit | Arbitrary file upload RCE (FortiLogger) → SYSTEM shell → NTLM hashdump |
+|---|---|---|
+| [footprinting-easy.md](https://github.com/AlbedoGown/red-team-labs/blob/main/footprinting-easy.md) | Easy | DNS zone transfer (AXFR) → subdomain enum → FTP → SSH key theft |
+| [footprinting-medium.md](https://github.com/AlbedoGown/red-team-labs/blob/main/footprinting-medium.md) | Medium | NFS anonymous mount → SMB → credential reuse → MSSQL |
+| [footprinting-hard.md](https://github.com/AlbedoGown/red-team-labs/blob/main/footprinting-hard.md) | Hard | SNMP community bruteforce → process argument leak → IMAP email → MySQL |
+| [metasploit-fortilogger.md](https://github.com/AlbedoGown/red-team-labs/blob/main/metasploit-fortilogger.md) | Metasploit | Arbitrary file upload RCE (FortiLogger) → SYSTEM shell → NTLM hashdump |
+| [starting-point-responder.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-responder.md) | Starting Point — Easy | LFI → UNC path (//attacker_ip) → NTLM capture (Responder) → hash crack → WinRM (Administrator) |
 
 ## Формат write-up'а
 
 Каждый файл разбит на секции:
 
-1. **Recon** — что смотрели и почему.
-2. **Vulnerability / Misconfig** — в чём суть проблемы (root cause, не только "как эксплуатировали").
-3. **Exploitation** — шаги атаки.
-4. **Remediation** — как закрыть проблему в реальной инфраструктуре.
-5. **Lessons learned** — обобщение, применимое за пределами конкретной лабы.
+- **Recon** — что смотрели и почему.
+- **Vulnerability / Misconfig** — в чём суть проблемы (root cause, не только "как эксплуатировали").
+- **Exploitation** — шаги атаки.
+- **Remediation** — как закрыть проблему в реальной инфраструктуре.
+- **Lessons learned** — обобщение, применимое за пределами конкретной лабы.
