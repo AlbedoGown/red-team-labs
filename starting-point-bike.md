@@ -1,105 +1,105 @@
 # Starting Point (Tier 2): Bike (Very Easy)
 
-> Public portfolio note: flags, passwords, hashes, host addresses and exploitation details have been removed or generalized.
+> Примечание для публичного портфолио: флаги, пароли, хеши, адреса хостов и детали эксплуатации удалены либо обобщены.
 
 ## 1. Recon
 
-### Network scanning
+### Сетевое сканирование
 
-Initial port and service discovery identified two exposed TCP services:
+Первичное обнаружение портов и сервисов выявило два доступных TCP-сервиса:
 
 ```text
 22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu
 80/tcp open  http    Node.js / Express
 ```
 
-### Web application observations
+### Наблюдения за веб-приложением
 
-The HTTP service exposed a subscription form that submitted an `email` value via a POST request to the application root. Supplying template-like syntax caused a verbose parser error referencing Handlebars and a server-side path within the Node.js application.
+HTTP-сервис содержал форму подписки, отправлявшую значение `email` POST-запросом на корневой маршрут приложения. Передача шаблоноподобного синтаксиса вызвала подробную ошибку парсера с упоминанием Handlebars и серверного пути внутри Node.js-приложения.
 
-This established two important facts for triage:
+На этапе triage это позволило установить два важных факта:
 
-- User-controlled input appeared to reach template compilation.
-- Detailed errors disclosed framework internals and filesystem paths.
+- Пользовательский ввод, вероятно, попадал в процесс компиляции шаблона.
+- Подробные ошибки раскрывали внутренности фреймворка и пути файловой системы.
 
-## 2. Vulnerability and Misconfiguration Analysis
+## 2. Vulnerability / Misconfiguration Analysis
 
 ### Server-Side Template Injection (SSTI)
 
-**Root cause:** Untrusted data from the `email` parameter was treated as template source rather than being rendered as data in a fixed template.
+**Root cause:** недоверенные данные из параметра `email` использовались как исходный текст шаблона, а не передавались как данные в фиксированный шаблон.
 
-**Impact:** An attacker could potentially alter template evaluation and, depending on the runtime and configuration, access functionality outside the intended template context.
+**Влияние:** атакующий мог менять логику обработки шаблона и, в зависимости от среды выполнения и конфигурации, потенциально получать доступ к функциям за пределами ожидаемого контекста шаблонизатора.
 
-### Template sandbox escape risk
+### Риск выхода из sandbox шаблонизатора
 
-**Root cause:** Handlebars templates and JavaScript runtime objects were exposed in a configuration that allowed dangerous property access patterns.
+**Root cause:** шаблоны Handlebars и объекты среды JavaScript были доступны в конфигурации, допускающей опасные шаблоны обращения к свойствам.
 
-**Impact:** A successful sandbox escape could enable command execution through the Node.js process. Public exploit payloads are intentionally omitted from this write-up.
+**Влияние:** успешный выход из sandbox мог позволить выполнить команды от имени процесса Node.js. Публичные эксплуатационные payload'ы намеренно не включены в этот write-up.
 
-### Excessive privileges
+### Избыточные привилегии
 
-**Root cause:** The web application process ran as `root` rather than a dedicated unprivileged service account.
+**Root cause:** процесс веб-приложения запускался от `root`, а не от выделенной непривилегированной сервисной учётной записи.
 
-**Impact:** Application-level code execution would immediately become full host compromise, removing the need for a separate local privilege-escalation step.
+**Влияние:** выполнение кода на уровне приложения сразу приводило бы к полной компрометации хоста и исключало необходимость отдельного шага локального повышения привилегий.
 
-## 3. Validation in the Lab
+## 3. Безопасная валидация в лабе
 
-The lab was assessed by using benign, non-destructive checks to confirm server-side template processing and to establish the security context of the affected service. No flags, credentials, reusable payloads, or commands targeting sensitive files are included here.
+В лабораторной среде использовались только безопасные, неразрушающие проверки: подтверждение серверной обработки шаблонов и определение контекста безопасности затронутого сервиса. Флаги, учётные данные, воспроизводимые payload'ы и команды для доступа к чувствительным файлам в документ не включены.
 
-The key lesson is the attack chain:
+Ключевая логика цепочки:
 
-1. A user-controlled form value reaches template compilation.
-2. Verbose errors disclose the template engine and deployment details.
-3. Unsafe template behavior can become server-side code execution.
-4. Running the application as root turns that application compromise into host compromise.
+1. Значение из пользовательской формы попадает в компиляцию шаблона.
+2. Verbose errors раскрывают шаблонизатор и детали развёртывания.
+3. Небезопасная обработка шаблона может привести к выполнению кода на сервере.
+4. Запуск приложения от `root` превращает компрометацию приложения в компрометацию хоста.
 
 ## 4. Remediation
 
-### Keep templates static
+### Используйте статические шаблоны
 
-Never compile user input as a template. Compile a trusted, static template and supply user input only as context data:
+Никогда не компилируйте пользовательский ввод как шаблон. Компилируйте только доверенный статический шаблон, а пользовательские значения передавайте исключительно в качестве контекста:
 
 ```javascript
-// Vulnerable pattern
+// Уязвимый паттерн
 const template = Handlebars.compile(req.body.email);
 
-// Safer pattern
+// Более безопасный паттерн
 const template = Handlebars.compile("We will contact you at: {{email}}");
 const result = template({ email: req.body.email });
 ```
 
-### Reduce information disclosure
+### Сокращайте раскрытие информации
 
-- Set `NODE_ENV=production`.
-- Configure centralized Express error handling.
-- Return generic client-facing errors and retain stack traces only in protected server-side logs.
+- Установите `NODE_ENV=production`.
+- Настройте централизованную обработку ошибок Express.
+- Клиенту возвращайте обобщённые ошибки, а stack trace храните только в защищённых серверных логах.
 
-### Apply least privilege
+### Применяйте принцип наименьших привилегий
 
-- Run Node.js under a dedicated non-root account such as `node` or `www-data`.
-- Restrict the service account's filesystem permissions.
-- Keep sensitive administrator directories inaccessible to the web service.
-- Use container or systemd hardening controls where applicable.
+- Запускайте Node.js от отдельной непривилегированной учётной записи, например `node` или `www-data`.
+- Ограничьте права сервисной учётной записи на файловую систему.
+- Закройте для веб-сервиса доступ к чувствительным административным каталогам.
+- Где применимо, используйте hardening-контроли контейнеров или systemd.
 
-### Secure development controls
+### Контроли безопасной разработки
 
-- Validate input server-side and apply allow-lists appropriate to each field.
-- Review template-engine configuration and dependency versions.
-- Add SAST rules and code-review checks for dynamic template compilation.
-- Test error handling before production deployment.
+- Валидируйте ввод на стороне сервера и применяйте allow-list, подходящий для каждого поля.
+- Проверяйте конфигурацию шаблонизатора и версии зависимостей.
+- Добавьте правила SAST и проверки code review на динамическую компиляцию шаблонов.
+- Проверяйте обработку ошибок до развёртывания в production.
 
 ## 5. SOC Detection Opportunities
 
-| Data source | Suspicious behavior | Detection idea |
+| Источник данных | Подозрительное поведение | Идея детектирования |
 | --- | --- | --- |
-| WAF / HTTP access logs | Template delimiters or suspicious JavaScript-property terms in POST parameters | Alert on repeated requests containing Handlebars-style blocks, `constructor`, or process-execution indicators. |
-| EDR / Auditd | Node.js spawns shells or system utilities | High-severity alert when `node` is the parent process of `/bin/sh`, `whoami`, `cat`, or other unexpected binaries. |
-| File auditing | Web-service account reads sensitive administrator paths | Alert when the Node.js service account accesses `/root/` or other protected locations. |
-| Application logs | Parser exceptions and recurring malformed template input | Correlate bursts of Handlebars parse errors with the source IP, endpoint, and request body indicators. |
+| WAF / HTTP access logs | Шаблонные разделители или подозрительные JavaScript-свойства в параметрах POST | Алерт на повторяющиеся запросы с блоками, характерными для Handlebars, `constructor` или индикаторами выполнения процессов. |
+| EDR / Auditd | Node.js порождает shell или системные утилиты | Высокоприоритетный алерт, если родительским процессом для `/bin/sh`, `whoami`, `cat` либо другой нетипичной утилиты является `node`. |
+| File auditing | Учётная запись веб-сервиса читает чувствительные административные пути | Алерт, если сервисная учётная запись Node.js обращается к `/root/` или другим защищённым расположениям. |
+| Application logs | Ошибки парсера и повторяющийся некорректный шаблонный ввод | Коррелируйте всплески Handlebars parser errors с IP-адресом источника, endpoint и индикаторами в теле запроса. |
 
-## 6. Key Takeaways
+## 6. Lessons Learned
 
-- Treat template source as code and keep it fully trusted and static.
-- Debug output can materially shorten an attacker's reconnaissance phase.
-- Least privilege limits the blast radius of web-application vulnerabilities.
-- SOC monitoring should correlate suspicious web input with process creation and sensitive-file access.
+- Исходный текст шаблона следует считать кодом: он должен быть полностью доверенным и статичным.
+- Debug output может существенно сократить фазу разведки для атакующего.
+- Принцип наименьших привилегий ограничивает масштаб последствий уязвимости веб-приложения.
+- SOC-мониторинг должен коррелировать подозрительный веб-ввод с созданием процессов и доступом к чувствительным файлам.
