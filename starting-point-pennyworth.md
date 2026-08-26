@@ -64,7 +64,6 @@ Process process = new ProcessBuilder(cmd)
 <REDACTED_FLAG>
 ```
 
-В рамках лаборатории отдельная команда для проверки текущего ОС-пользователя не выполнялась. Однако успешное чтение файла в `/root/` указывает на root-equivalent access в данном окружении.
 
 ### Reference
 
