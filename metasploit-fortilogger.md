@@ -19,7 +19,7 @@ db_nmap -A --top-ports 60 -T5 10.129.173.75
 | 139/tcp | netbios-ssn | Microsoft Windows netbios-ssn |
 | 445/tcp | microsoft-ds | — |
 | 3389/tcp | ms-wbt-server | RDP, hostname WIN-51BJ97BCIPV |
-| 5000/tcp | http | Microsoft IIS 10.0 — **FortiLogger | Log and Report System** |
+| 5000/tcp | http | Microsoft IIS 10.0 — **FortiLogger \| Log and Report System** |
 
 **Ключевое наблюдение:** порт 5000 с нестандартным HTTP-сервисом — сразу приоритетная цель. `http-title` в выводе Nmap прямо называет продукт (FortiLogger), что резко сужает область поиска эксплойта — вместо общего анализа IIS ищем известные CVE именно для этого стороннего приложения, развёрнутого поверх IIS.
 
