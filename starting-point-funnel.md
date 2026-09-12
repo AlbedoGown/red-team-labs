@@ -111,7 +111,7 @@ SELECT value FROM flag;
 
 **Вывод запроса:**
 ```text
-              value               
+              value
 ----------------------------------
  <REDACTED_FLAG>
 (1 row)
