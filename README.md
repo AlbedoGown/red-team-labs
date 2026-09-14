@@ -17,7 +17,7 @@
 | [starting-point-cap.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-cap.md) | Начальная точка — Легко | Панель управления IDOR (утечка pcap) → Учетные данные FTP в открытом тексте → Привилегии Python cap_setuid |
 | [starting-point-funnel.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-funnel.md) | Отправная точка — Уровень 1 | Анонимная утечка FTP → распыление паролей (Hydra) → переадресация локальных портов SSH (PostgreSQL) |
 | [starting-point-bike.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-bike.md) | Начальная точка — Уровень 2 | Handlebars SSTI → небезопасный контекст выполнения Node.js → влияние на корневом уровне |
-| starting-point-tactics.md | Starting Point — Tier 1 | Blank Administrator Password → SMB Administrative Shares (C$) Access |
+| [starting-point-tactics.md](https://github.com/AlbedoGown/red-team-labs/blob/main/starting-point-tactics.md) | Starting Point — Tier 1 | Blank Administrator Password → SMB Administrative Shares (C$) Access |
 
 ## Формат write-up'а
 
